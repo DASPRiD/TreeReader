@@ -1,0 +1,46 @@
+{
+    "name": "dasprid/treereader",
+    "description": "Structured array tree reader",
+    "type": "library",
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0",
+        "squizlabs/php_codesniffer": "^2.8"
+    },
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Ben Scholzen 'DASPRiD'",
+            "homepage": "https://dasprids.de/",
+            "email": "mail@dasprids.de"
+        }
+    ],
+    "keywords": [
+        "array",
+        "tree",
+        "reader"
+    ],
+    "autoload": {
+        "psr-4": {
+            "DASPRiD\\TreeReader\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DASPRiD\\TreeReaderTest\\": "test/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs",
+            "@test"
+        ],
+        "coveralls": "coveralls",
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
+    }
+}
