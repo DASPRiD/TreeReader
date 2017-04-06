@@ -140,4 +140,13 @@ final class TreeReaderTest extends TestCase
         $this->assertAttributeSame(['foo'], 'parentKeys', $children);
         $this->assertAttributeSame($value, 'data', $children);
     }
+
+    public function testKeyNotFoundExceptionWithMultipleParents()
+    {
+        $treeReader = new TreeReader(['foo' => ['bar' => []]]);
+
+        $this->expectException(KeyNotFoundException::class);
+        $this->expectExceptionMessage('in tree "foo->bar"');
+        $treeReader->getChildren('foo')->getChildren('bar')->getString('baz');
+    }
 }

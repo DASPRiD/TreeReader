@@ -56,7 +56,7 @@ final class TreeReader
 
     public function getChildren(string $key, array $default = null) : self
     {
-        return new TreeReader($this->getValue($key, 'array', $default), ...$this->parentKeys + [$key]);
+        return new TreeReader($this->getValue($key, 'array', $default), ...array_merge($this->parentKeys, [$key]));
     }
 
     private function getValue(string $key, string $expectedType, $default)
