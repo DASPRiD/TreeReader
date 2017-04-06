@@ -18,10 +18,10 @@ final class TreeReader
      */
     private $parentKeys;
 
-    public function __construct(array $data, string ...$parentKeys)
+    public function __construct(array $data, string $name = 'root', string ...$parentKeys)
     {
         $this->data = $data;
-        $this->parentKeys = $parentKeys;
+        $this->parentKeys = array_merge($parentKeys, [$name]);
     }
 
     public function hasKey(string $key) : bool
@@ -56,7 +56,7 @@ final class TreeReader
 
     public function getChildren(string $key, array $default = null) : self
     {
-        return new TreeReader($this->getValue($key, 'array', $default), ...array_merge($this->parentKeys, [$key]));
+        return new TreeReader($this->getValue($key, 'array', $default), $key, ...$this->parentKeys);
     }
 
     private function getValue(string $key, string $expectedType, $default)

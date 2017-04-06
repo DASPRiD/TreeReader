@@ -137,7 +137,7 @@ final class TreeReaderTest extends TestCase
     {
         $treeReader = new TreeReader(['foo' => $value]);
         $children = $treeReader->{$method}('foo', $default);
-        $this->assertAttributeSame(['foo'], 'parentKeys', $children);
+        $this->assertAttributeSame(['root', 'foo'], 'parentKeys', $children);
         $this->assertAttributeSame($value, 'data', $children);
     }
 
@@ -146,7 +146,16 @@ final class TreeReaderTest extends TestCase
         $treeReader = new TreeReader(['foo' => ['bar' => []]]);
 
         $this->expectException(KeyNotFoundException::class);
-        $this->expectExceptionMessage('in tree "foo->bar"');
+        $this->expectExceptionMessage('in tree "root->foo->bar"');
+        $treeReader->getChildren('foo')->getChildren('bar')->getString('baz');
+    }
+
+    public function testKeyNotFoundExceptionWithMultipleParentsAndAlternativeRootName()
+    {
+        $treeReader = new TreeReader(['foo' => ['bar' => []]], 'config');
+
+        $this->expectException(KeyNotFoundException::class);
+        $this->expectExceptionMessage('in tree "config->foo->bar"');
         $treeReader->getChildren('foo')->getChildren('bar')->getString('baz');
     }
 }
