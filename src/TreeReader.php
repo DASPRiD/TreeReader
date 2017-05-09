@@ -4,9 +4,10 @@ declare(strict_types = 1);
 namespace DASPRiD\TreeReader;
 
 use DASPRiD\TreeReader\Exception\KeyNotFoundException;
-use DASPRiD\TreeReader\Exception\UnexpectedTypeException;
+use IteratorAggregate;
+use Traversable;
 
-final class TreeReader
+final class TreeReader implements IteratorAggregate
 {
     /**
      * @var array
@@ -24,6 +25,16 @@ final class TreeReader
         $this->parentKeys = array_merge($parentKeys, [$name]);
     }
 
+    /**
+     * @return Traversable|Item[]
+     */
+    public function getIterator() : Traversable
+    {
+        foreach ($this->data as $key => $value) {
+            yield new Item((string) $key, $value);
+        }
+    }
+
     public function hasKey(string $key) : bool
     {
         return array_key_exists($key, $this->data);
@@ -36,51 +47,39 @@ final class TreeReader
 
     public function getString(string $key, string $default = null) : string
     {
-        return $this->getValue($key, 'string', $default);
+        return $this->getItem($key, $default)->getString();
     }
 
     public function getInt(string $key, int $default = null) : int
     {
-        return $this->getValue($key, 'integer', $default);
+        return $this->getItem($key, $default)->getInt();
     }
 
     public function getFloat(string $key, float $default = null) : float
     {
-        return $this->getValue($key, 'double', $default);
+        return $this->getItem($key, $default)->getFloat();
     }
 
     public function getBool(string $key, bool $default = null) : bool
     {
-        return $this->getValue($key, 'boolean', $default);
+        return $this->getItem($key, $default)->getBool();
     }
 
     public function getChildren(string $key, array $default = null) : self
     {
-        return new TreeReader($this->getValue($key, 'array', $default), $key, ...$this->parentKeys);
+        return $this->getItem($key, $default)->getChildren();
     }
 
-    private function getValue(string $key, string $expectedType, $default)
+    private function getItem(string $key, $default)
     {
-        if (!array_key_exists($key, $this->data)) {
-            if (null !== $default) {
-                return $default;
-            }
-
-            throw KeyNotFoundException::fromNonExistentKey($key, ...$this->parentKeys);
+        if ($this->hasNonNullValue($key)) {
+            return new Item($key, $this->data[$key], ...$this->parentKeys);
         }
 
-        $value = $this->data[$key];
-
-        if (null === $value && null !== $default) {
-            return $default;
+        if (null !== $default) {
+            return new Item($key, $default, ...$this->parentKeys);
         }
 
-        $valueType = gettype($value);
-
-        if ($valueType !== $expectedType) {
-            throw UnexpectedTypeException::fromUnexpectedType($key, $valueType, $expectedType, ...$this->parentKeys);
-        }
-
-        return $value;
+        throw KeyNotFoundException::fromNonExistentKey($key, ...$this->parentKeys);
     }
 }

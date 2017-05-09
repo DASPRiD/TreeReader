@@ -158,4 +158,25 @@ final class TreeReaderTest extends TestCase
         $this->expectExceptionMessage('in tree "config->foo->bar"');
         $treeReader->getChildren('foo')->getChildren('bar')->getString('baz');
     }
+
+    public function testIterator()
+    {
+        $treeReader = new TreeReader([
+            'bar' => 'bar1',
+            'baz' => 'baz2',
+            0 => 'bat3',
+        ], 'config');
+
+        $data = [];
+
+        foreach ($treeReader as $item) {
+            $data[$item->getKey()] = $item->getString();
+        }
+
+        $this->assertSame([
+            'bar' => 'bar1',
+            'baz' => 'baz2',
+            '0' => 'bat3',
+        ], $data);
+    }
 }
