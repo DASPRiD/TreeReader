@@ -70,6 +70,11 @@ final class TreeReader implements IteratorAggregate
         return $this->getItem($key, $default)->getChildren();
     }
 
+    public function getArray(string $key, array $default = null) : array
+    {
+        return $this->getItem($key, $default)->getArray();
+    }
+
     private function getItem(string $key, $default)
     {
         if ($this->hasNonNullValue($key)) {

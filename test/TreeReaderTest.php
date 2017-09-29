@@ -49,6 +49,11 @@ final class TreeReaderTest extends TestCase
                 true,
                 false,
             ],
+            [
+                'getArray',
+                ['baz' => 'bat'],
+                ['bat' => 'baz'],
+            ],
         ];
     }
 

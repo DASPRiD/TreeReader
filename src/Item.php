@@ -66,6 +66,11 @@ final class Item
         return new TreeReader($this->getValue('array', $default), $this->key, ...$this->parentKeys);
     }
 
+    public function getArray(array $default = null) : array
+    {
+        return $this->getValue('array', $default);
+    }
+
     private function getValue(string $expectedType, $default)
     {
         if (null === $this->value && null !== $default) {
